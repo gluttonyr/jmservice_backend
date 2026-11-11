@@ -36,6 +36,14 @@ export class AdminCaptureAvailabilityService implements OnModuleInit, OnModuleDe
     return this.parametres.update(PARAMETRE_CODES.DEPOTS_FERMES, { valeur: closed ? 1 : 0 });
   }
 
+  async withdrawalsClosed(): Promise<boolean> {
+    return Number(await this.parametres.getValue(PARAMETRE_CODES.RETRAITS_FERMES)) === 1;
+  }
+
+  setWithdrawalsClosed(closed: boolean) {
+    return this.parametres.update(PARAMETRE_CODES.RETRAITS_FERMES, { valeur: closed ? 1 : 0 });
+  }
+
   onModuleInit() {
     this.pollHandle = setInterval(() => {
       if (this.pollRunning) return;

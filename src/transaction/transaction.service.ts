@@ -36,6 +36,10 @@ const AUTO_TIMEOUT_SECONDS = 15 * 60;
 const depositsUnavailableMessage = (closed: boolean) => closed
   ? 'Les dépôts sont temporairement fermés. Réessayez plus tard.'
   : 'Les dépôts sont temporairement indisponibles : la capture automatique des paiements est hors ligne. Réessayez plus tard.';
+const WITHDRAWALS_CLOSED_TITLE = 'Retraits momentanément désactivés';
+const WITHDRAWALS_CLOSED_MESSAGE = 'Les retraits sont désactivés pour le moment. Patientez, ils seront réactivés très bientôt. Vos dépôts restent disponibles.';
+// One explanation per client in this window, however many times they retry.
+const WITHDRAWALS_CLOSED_NOTICE_MS = 10 * 60_000;
 
 export interface CaptureOptions {
   skipPackageCheck?: boolean;
@@ -49,6 +53,7 @@ export class TransactionService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(TransactionService.name);
   private timeoutHandle?: ReturnType<typeof setInterval>;
   private timeoutRunning = false;
+  private readonly withdrawalsClosedNoticeAt = new Map<number, number>();
 
   constructor(
     private readonly repository: TransactionRepository,
@@ -86,6 +91,12 @@ export class TransactionService implements OnModuleInit, OnModuleDestroy {
     if (payload.type === TransactionType.DEPOT) {
       const capture = await this.captureAvailability.getStatus();
       if (!capture.available) throw new ServiceUnavailableException(depositsUnavailableMessage(capture.depositsClosed));
+    }
+    if (payload.type === TransactionType.RETRAIT && await this.captureAvailability.withdrawalsClosed()) {
+      // Refused before the 1XBET payout, so no account is debited. Apps already installed only show a
+      // generic error for a failed withdrawal: the push and in-app notification tell the client why.
+      await this.notifyWithdrawalsClosed(userId);
+      throw new ServiceUnavailableException(WITHDRAWALS_CLOSED_MESSAGE);
     }
     if (payload.type === TransactionType.RETRAIT && !payload.codeRetrait?.trim()) {
       throw new BadRequestException('Le code de retrait est requis');
@@ -199,6 +210,13 @@ export class TransactionService implements OnModuleInit, OnModuleDestroy {
     await this.captureAvailability.setDepositsClosed(closed);
     this.logger.warn(JSON.stringify({ event: 'deposits.closed.changed', adminId, closed }));
     return this.captureAvailability.getStatus();
+  }
+
+  async setWithdrawalsClosed(adminId: number, closed: boolean) {
+    await this.assertAdmin(adminId);
+    await this.captureAvailability.setWithdrawalsClosed(closed);
+    this.logger.warn(JSON.stringify({ event: 'withdrawals.closed.changed', adminId, closed }));
+    return { withdrawalsClosed: closed };
   }
 
   async captureHeartbeat(adminId: number, dto: AdminCaptureHeartbeatDto) {
@@ -882,6 +900,26 @@ export class TransactionService implements OnModuleInit, OnModuleDestroy {
         : `Votre compte 1XBET a été débité${transaction.montant > 0 ? ` de ${transaction.montant} FCFA` : ''}. Le retrait a été envoyé au numéro indiqué.`;
       case TransactionStatus.REJETEE: return `Nous avons refusé votre ${label.toLowerCase()}.${transaction.motifRejet ? ` ${transaction.motifRejet}` : ''}`;
       case TransactionStatus.ANNULEE: return `${label} annulé.`;
+    }
+  }
+
+  private async notifyWithdrawalsClosed(userId: number) {
+    const now = Date.now();
+    const last = this.withdrawalsClosedNoticeAt.get(userId);
+    if (last && now - last < WITHDRAWALS_CLOSED_NOTICE_MS) return;
+    this.withdrawalsClosedNoticeAt.set(userId, now);
+    for (const [id, at] of this.withdrawalsClosedNoticeAt) {
+      if (now - at >= WITHDRAWALS_CLOSED_NOTICE_MS) this.withdrawalsClosedNoticeAt.delete(id);
+    }
+    try {
+      await this.appNotificationService.createForUser(userId, WITHDRAWALS_CLOSED_TITLE, WITHDRAWALS_CLOSED_MESSAGE);
+      const tokens = (await this.pushDeviceService.findActiveByUser(userId)).map((device) => device.token);
+      // ADMIN_BROADCAST: installed apps open the notifications list on tap, where this message is shown.
+      if (tokens.length) {
+        await this.pushNotificationService.sendToTokens(tokens, WITHDRAWALS_CLOSED_TITLE, WITHDRAWALS_CLOSED_MESSAGE, { type: 'ADMIN_BROADCAST' });
+      }
+    } catch (error) {
+      this.logger.error('Échec de la notification de fermeture des retraits', error);
     }
   }
 

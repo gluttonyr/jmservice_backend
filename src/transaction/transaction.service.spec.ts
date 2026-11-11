@@ -133,6 +133,7 @@ describe('TransactionService automatic deposit verification', () => {
           getPausedExpirationMs: jest.fn().mockResolvedValue(0),
           heartbeat: jest.fn(),
           setManualOverride: jest.fn(),
+          withdrawalsClosed: jest.fn().mockResolvedValue(false),
         } },
       ],
     }).compile();
@@ -208,6 +209,34 @@ describe('TransactionService automatic deposit verification', () => {
       numeroTelephone: '+22890000000',
       compteDestinataire: '123456789',
     }, 7)).rejects.toThrow('ID 1XBET introuvable');
+  });
+
+  it('refuses withdrawals while they are closed, before any 1XBET call, and explains it once', async () => {
+    const capture = moduleRef.get(AdminCaptureAvailabilityService) as any;
+    const notifications = moduleRef.get(AppNotificationService) as any;
+    const pushDevices = moduleRef.get(PushDeviceService) as any;
+    const push = moduleRef.get(PushNotificationService) as any;
+    capture.withdrawalsClosed.mockResolvedValue(true);
+    pushDevices.findActiveByUser.mockResolvedValue([{ token: 'ExponentPushToken[client]' }]);
+    const withdrawal = {
+      type: TransactionType.RETRAIT,
+      operateur: 'TMoney',
+      numeroTelephone: '+22890000000',
+      compteDestinataire: '123456789',
+      codeRetrait: 'ABCD',
+    };
+
+    await expect(service.create(withdrawal, 7)).rejects.toThrow('Les retraits sont désactivés pour le moment');
+    await expect(service.create(withdrawal, 7)).rejects.toThrow('Les retraits sont désactivés pour le moment');
+
+    expect(servculService.findPlayer).not.toHaveBeenCalled();
+    expect(repository.save).not.toHaveBeenCalled();
+    expect(notifications.createForUser).toHaveBeenCalledTimes(1);
+    expect(notifications.createForUser).toHaveBeenCalledWith(7, 'Retraits momentanément désactivés', expect.any(String));
+    expect(push.sendToTokens).toHaveBeenCalledTimes(1);
+    expect(push.sendToTokens).toHaveBeenCalledWith(
+      ['ExponentPushToken[client]'], 'Retraits momentanément désactivés', expect.any(String), { type: 'ADMIN_BROADCAST' },
+    );
   });
 
   it('matches an admin notification and automatically credits the verified deposit', async () => {

@@ -117,6 +117,18 @@ export class TransactionController {
     };
   }
 
+  // Closes (or reopens) withdrawals for every client.
+  @Post('capture/withdrawals-closed')
+  async setWithdrawalsClosed(@Body() body: { closed: boolean }, @Req() req: any): Promise<ApiResponse> {
+    this.assertAdmin(req);
+    if (typeof body?.closed !== 'boolean') throw new BadRequestException('closed doit être true ou false');
+    return {
+      data: await this.service.setWithdrawalsClosed(Number(req.user.userId), body.closed),
+      message: body.closed ? 'Retraits fermés pour tous les clients' : 'Retraits rouverts',
+      status: 200,
+    };
+  }
+
   @Post('capture/manual-override')
   async setCaptureOverride(@Body() body: AdminCaptureOverrideDto, @Req() req: any): Promise<ApiResponse> {
     this.assertAdmin(req);

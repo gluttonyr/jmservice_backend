@@ -4,4 +4,6 @@ export const PARAMETRE_CODES = {
   IOS_MIN_VERSION_CODE: 'IOS_MIN_VERSION_CODE',
   // 1 = deposits closed for every client, whatever the capture state.
   DEPOTS_FERMES: 'DEPOTS_FERMES',
+  // 1 = withdrawals closed for every client.
+  RETRAITS_FERMES: 'RETRAITS_FERMES',
 };

@@ -72,6 +72,21 @@ export class ParametreService implements OnModuleInit {
     }
 
     // ============================================================
+    // RETRAITS_FERMES
+    // ============================================================
+
+    if (!(await this.parametreRepository.findByCode(PARAMETRE_CODES.RETRAITS_FERMES))) {
+      await this.parametreRepository.save(
+        this.parametreRepository.create({
+          code: PARAMETRE_CODES.RETRAITS_FERMES,
+          libelle: 'Retraits fermés pour tous les clients (1 = fermés, 0 = ouverts)',
+          // Created closed: withdrawals stay shut until an admin reopens them.
+          valeur: 1,
+        }),
+      );
+    }
+
+    // ============================================================
     // IOS_MIN_VERSION_CODE
     // ============================================================
 
