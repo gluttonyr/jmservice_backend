@@ -6,4 +6,9 @@ export const PARAMETRE_CODES = {
   DEPOTS_FERMES: 'DEPOTS_FERMES',
   // 1 = withdrawals closed for every client.
   RETRAITS_FERMES: 'RETRAITS_FERMES',
+  // Bookmaker promo code shown to clients (text in valeurTexte). Empty = not shown.
+  CODE_PROMO: 'CODE_PROMO',
 };
+
+// Value given to CODE_PROMO at startup while it is still empty. Empty until the real code is known.
+export const CODE_PROMO_PAR_DEFAUT = '';

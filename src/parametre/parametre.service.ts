@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException, OnModuleInit } from '@nestjs/common';
 import { ParametreRepository } from './parametre.repository';
 import { Parametre } from './entities/parametre.entity';
-import { PARAMETRE_CODES } from './parametre.constants';
+import { CODE_PROMO_PAR_DEFAUT, PARAMETRE_CODES } from './parametre.constants';
 
 @Injectable()
 export class ParametreService implements OnModuleInit {
@@ -84,6 +84,26 @@ export class ParametreService implements OnModuleInit {
           valeur: 1,
         }),
       );
+    }
+
+    // ============================================================
+    // CODE_PROMO
+    // ============================================================
+
+    const codePromo = await this.parametreRepository.findByCode(PARAMETRE_CODES.CODE_PROMO);
+    if (!codePromo) {
+      await this.parametreRepository.save(
+        this.parametreRepository.create({
+          code: PARAMETRE_CODES.CODE_PROMO,
+          libelle: 'Code promo affiché aux clients (vide = non affiché)',
+          valeur: 0,
+          valeurTexte: CODE_PROMO_PAR_DEFAUT,
+        }),
+      );
+    } else if (!codePromo.valeurTexte?.trim() && CODE_PROMO_PAR_DEFAUT) {
+      // Fills a still-empty code once a default is set; never overwrites a code the admin entered.
+      codePromo.valeurTexte = CODE_PROMO_PAR_DEFAUT;
+      await this.parametreRepository.save(codePromo);
     }
 
     // ============================================================

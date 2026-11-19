@@ -7,7 +7,9 @@ import { PushDeviceService } from '../push-device/push-device.service';
 import { UtilisateurService } from '../utilisateur/utilisateur.service';
 import { DiscussionService } from '../discussion/discussion.service';
 import { Transaction, TransactionStatus, TransactionType, ValidationMethod } from './entities/transaction.entity';
-import { ConflictException } from '@nestjs/common';
+import { BadRequestException, ConflictException } from '@nestjs/common';
+import { BookmakerService } from '../bookmaker/bookmaker.service';
+import { BookmakerIntegration } from '../bookmaker/entities/bookmaker.entity';
 import { TransactionRepository } from './transaction.repository';
 import { TransactionService } from './transaction.service';
 import { ServculService } from '../servcul/servcul.service';
@@ -38,6 +40,7 @@ describe('TransactionService automatic deposit verification', () => {
   let operatorService: { findByNom: jest.Mock };
   let servculService: { findPlayer: jest.Mock; addPlayerDeposit: jest.Mock };
   let userService: { findUserById: jest.Mock; getAdminPushTokens: jest.Mock };
+  let bookmakerService: { resolveForTransaction: jest.Mock };
 
   const operator = {
     nom: 'TMoney',
@@ -108,6 +111,14 @@ describe('TransactionService automatic deposit verification', () => {
       findPlayer: jest.fn().mockResolvedValue({ userId: 123456789, name: 'Test Player', currencyId: 1 }),
       addPlayerDeposit: jest.fn().mockResolvedValue({ success: true }),
     };
+    bookmakerService = {
+      resolveForTransaction: jest.fn(async (code?: string) => {
+        if (code && code.toUpperCase() !== '1XBET') {
+          throw new BadRequestException(`${code} n’est pas encore disponible. Choisissez un autre bookmaker.`);
+        }
+        return { code: '1XBET', nom: '1XBET', integration: BookmakerIntegration.SERVCUL, active: true };
+      }),
+    };
     userService = {
       getAdminPushTokens: jest.fn().mockResolvedValue([]),
       findUserById: jest.fn().mockResolvedValue({ id: 99, role: 'ADMIN', active: true }),
@@ -128,6 +139,7 @@ describe('TransactionService automatic deposit verification', () => {
         { provide: OperateurService, useValue: operatorService },
         { provide: ServculService, useValue: servculService },
         { provide: AppNotificationService, useValue: { createForUser: jest.fn().mockResolvedValue(undefined) } },
+        { provide: BookmakerService, useValue: bookmakerService },
         { provide: AdminCaptureAvailabilityService, useValue: {
           getStatus: jest.fn().mockResolvedValue({ available: true, deviceAvailable: true, manualOverride: false }),
           getPausedExpirationMs: jest.fn().mockResolvedValue(0),
@@ -156,6 +168,40 @@ describe('TransactionService automatic deposit verification', () => {
     }, 7)).rejects.toThrow('ID 1XBET introuvable');
 
     expect(servculService.findPlayer).toHaveBeenCalledWith(123456789);
+    expect(repository.createDepositIfNoOpen).not.toHaveBeenCalled();
+  });
+
+  it('records 1XBET when an app without the bookmaker step sends no bookmaker', async () => {
+    repository.findByTrackingId.mockResolvedValue(null);
+
+    await service.create({
+      type: TransactionType.DEPOT,
+      montant: 1000,
+      operateur: 'TMoney',
+      numeroTelephone: '+22890000000',
+      compteDestinataire: '123456789',
+    }, 7);
+
+    expect(bookmakerService.resolveForTransaction).toHaveBeenCalledWith(undefined);
+    expect(repository.createDepositIfNoOpen).toHaveBeenCalledWith(
+      7,
+      expect.objectContaining({ bookmaker: '1XBET' }),
+      expect.any(Date),
+      0,
+    );
+  });
+
+  it('refuses a bookmaker that is not available yet before calling the 1XBET cash desk', async () => {
+    await expect(service.create({
+      type: TransactionType.DEPOT,
+      montant: 1000,
+      operateur: 'TMoney',
+      numeroTelephone: '+22890000000',
+      compteDestinataire: '123456789',
+      bookmaker: '1WIN',
+    }, 7)).rejects.toThrow('1WIN n’est pas encore disponible');
+
+    expect(servculService.findPlayer).not.toHaveBeenCalled();
     expect(repository.createDepositIfNoOpen).not.toHaveBeenCalled();
   });
 

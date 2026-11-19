@@ -17,6 +17,7 @@ import { AdminCaptureDevice } from './entities/admin-capture-device.entity';
 import { AdminCaptureState } from './entities/admin-capture-state.entity';
 import { AdminCaptureAvailabilityService } from './admin-capture-availability.service';
 import { ParametreModule } from '../parametre/parametre.module';
+import { BookmakerModule } from '../bookmaker/bookmaker.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ParametreModule } from '../parametre/parametre.module';
     ServculModule,
     AppNotificationModule,
     ParametreModule,
+    BookmakerModule,
   ],
   providers: [TransactionService, TransactionRepository, TransactionMapper, AdminCaptureAvailabilityService],
   controllers: [TransactionController],

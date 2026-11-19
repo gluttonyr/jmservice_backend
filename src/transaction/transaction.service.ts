@@ -31,6 +31,8 @@ import { AdminCaptureAvailabilityService } from './admin-capture-availability.se
 import { AdminCaptureHeartbeatDto } from './dto/admin-capture-heartbeat.dto';
 import { ResolveCaptureReconciliationDto } from './dto/resolve-capture-reconciliation.dto';
 import { RejectTransactionDto } from './dto/reject-transaction.dto';
+import { BookmakerService } from '../bookmaker/bookmaker.service';
+import { BookmakerIntegration, DEFAULT_BOOKMAKER_CODE } from '../bookmaker/entities/bookmaker.entity';
 
 const AUTO_TIMEOUT_SECONDS = 15 * 60;
 const depositsUnavailableMessage = (closed: boolean) => closed
@@ -67,6 +69,7 @@ export class TransactionService implements OnModuleInit, OnModuleDestroy {
     private readonly servculService: ServculService,
     private readonly appNotificationService: AppNotificationService,
     private readonly captureAvailability: AdminCaptureAvailabilityService,
+    private readonly bookmakerService: BookmakerService,
   ) {}
 
   onModuleInit() {
@@ -104,6 +107,11 @@ export class TransactionService implements OnModuleInit, OnModuleDestroy {
     if (payload.type === TransactionType.RETRAIT && !payload.operateur?.trim()) {
       throw new BadRequestException('Choisissez un opérateur pour le retrait');
     }
+    const bookmaker = await this.bookmakerService.resolveForTransaction(payload.bookmaker);
+    if (bookmaker.integration !== BookmakerIntegration.SERVCUL) {
+      // Every available bookmaker goes through Servcul today; a new integration must be wired here first.
+      throw new BadRequestException(`${bookmaker.nom} n’est pas encore disponible. Choisissez un autre bookmaker.`);
+    }
     const accountId = payload.compteDestinataire?.trim();
     if (!accountId || !/^\d+$/.test(accountId)) {
       throw new BadRequestException('Un ID 1XBET numérique est requis');
@@ -124,6 +132,7 @@ export class TransactionService implements OnModuleInit, OnModuleDestroy {
     }
     const transactionData = this.repository.create({
       ...payload,
+      bookmaker: bookmaker.code,
       montant: payload.montant ?? 0,
       compteDestinataire: String(playerId),
       operateur: operateur?.nom ?? payload.operateur,
@@ -744,6 +753,10 @@ export class TransactionService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async executeServculTransaction(transaction: Transaction): Promise<void> {
+    // Servcul is the 1XBET cash desk: never credit or debit another bookmaker's account ID there.
+    if ((transaction.bookmaker ?? DEFAULT_BOOKMAKER_CODE).toUpperCase() !== DEFAULT_BOOKMAKER_CODE) {
+      throw new BadRequestException(`Le bookmaker ${transaction.bookmaker} n’est pas relié à la caisse 1XBET`);
+    }
     const accountId = transaction.compteDestinataire?.trim();
     const playerId = accountId && /^\d+$/.test(accountId) ? Number(accountId) : NaN;
     if (!Number.isSafeInteger(playerId)) {

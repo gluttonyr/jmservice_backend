@@ -43,6 +43,8 @@ import { AdminCaptureState } from './transaction/entities/admin-capture-state.en
 import { SmsCapture } from './sms-capture/entities/sms-capture.entity';
 import { SmsCaptureDeviceToken } from './sms-capture/entities/sms-capture-device-token.entity';
 import { SmsCaptureModule } from './sms-capture/sms-capture.module';
+import { Bookmaker } from './bookmaker/entities/bookmaker.entity';
+import { BookmakerModule } from './bookmaker/bookmaker.module';
 
 @Module({
   imports: [
@@ -79,6 +81,7 @@ import { SmsCaptureModule } from './sms-capture/sms-capture.module';
       AppNotification,
       SmsCapture,
       SmsCaptureDeviceToken,
+      Bookmaker,
     ],
 
     synchronize: config.get('NODE_ENV') !== 'production',
@@ -107,6 +110,7 @@ import { SmsCaptureModule } from './sms-capture/sms-capture.module';
     AppNotificationModule,
     ServculModule,
     SmsCaptureModule,
+    BookmakerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

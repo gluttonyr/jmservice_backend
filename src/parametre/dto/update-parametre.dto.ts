@@ -8,4 +8,8 @@ export class UpdateParametreDto {
   @IsOptional()
   @IsNumber()
   valeur?: number;
+
+  @IsOptional()
+  @IsString()
+  valeurTexte?: string;
 }
