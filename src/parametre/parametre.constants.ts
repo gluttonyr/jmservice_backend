@@ -10,5 +10,6 @@ export const PARAMETRE_CODES = {
   CODE_PROMO: 'CODE_PROMO',
 };
 
-// Value given to CODE_PROMO at startup while it is still empty. Empty until the real code is known.
-export const CODE_PROMO_PAR_DEFAUT = '';
+// Value given to CODE_PROMO at startup while it is still empty (JM Services code, from the 2026-11-19 flyer).
+// The admin's value is never overwritten.
+export const CODE_PROMO_PAR_DEFAUT = 'JM13';
