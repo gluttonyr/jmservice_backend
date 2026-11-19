@@ -150,7 +150,7 @@ export class MessageService {
     }
 
     const senderName = isSenderAdmin
-      ? 'MatiStore Support'
+      ? 'JM Services Support'
       : `${message.sender.nom ?? ''} ${message.sender.prenom ?? ''}`.trim() || 'Nouveau message';
 
     await this.pushNotificationService.sendToTokens(

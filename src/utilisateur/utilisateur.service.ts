@@ -67,7 +67,7 @@ export class UtilisateurService implements OnModuleInit {
       nom: 'Admin',
       prenom: 'System',
       username: 'admin',
-      email: 'admin@matistore.com',
+      email: 'admin@jmservices.local',
       password: await bcrypt.hash(password, 10),
       role: UserRole.ADMIN,
       active: true,
@@ -78,7 +78,7 @@ export class UtilisateurService implements OnModuleInit {
     console.log(`
   ====================================
   👑 Compte administrateur créé
-  Email : admin@matistore.com
+  Email : admin@jmservices.local
   Mot de passe : ${password}
   ====================================
   `);
@@ -265,7 +265,7 @@ export class UtilisateurService implements OnModuleInit {
       nom: 'Compte',
       prenom: 'supprimé',
       username: 'Compte supprimé',
-      email: `deleted-${user.trackingId}@deleted.matistore.tech`,
+      email: `deleted-${user.trackingId}@deleted.jmservices.invalid`,
       telephone: null,
       image: null,
       password: null,

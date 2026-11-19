@@ -203,7 +203,7 @@ getDiscussionByUser(userId: string) {
   }
   async createForUser(user:User) {
     const discussionSupport = this.discussionRepository.create({
-      titre: `Support MATISTORE`,
+      titre: `Support JM SERVICES`,
       type: DiscussionType.SUPPORT,
       
       statut: DiscussionStatus.AUTRE,

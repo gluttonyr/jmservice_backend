@@ -6,7 +6,7 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-  CREATE TYPE sms_attribution_origin AS ENUM ('AUTO_MATI_PAY', 'MATISTORE', 'MANUEL');
+  CREATE TYPE sms_attribution_origin AS ENUM ('AUTO_MATI_PAY', 'JM_SERVICES', 'MANUEL');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 CREATE TABLE IF NOT EXISTS sms_captures (

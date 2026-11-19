@@ -16,7 +16,7 @@ export class Operateur extends BaseEntity {
   @Column({ name: 'format_ussd' })
   formatUssd!: string;
 
-  /** Code USSD exécuté par MatiStore pour payer le client après son débit 1XBET. */
+  /** Code USSD exécuté par JM Services pour payer le client après son débit 1XBET. */
   @Column({ name: 'format_retrait_ussd', type: 'varchar', length: 255, nullable: true })
   formatRetraitUssd?: string | null;
 

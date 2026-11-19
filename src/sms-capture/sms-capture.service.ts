@@ -221,7 +221,7 @@ export class SmsCaptureService {
       const tx = await this.transactions.findByPaymentReference(fields.reference);
       return this.save(parsed, {
         statut: SmsCaptureStatus.ATTRIBUE,
-        origineAttribution: SmsAttributionOrigin.MATISTORE,
+        origineAttribution: SmsAttributionOrigin.JM_SERVICES,
         transaction: tx ? ({ trackingId: tx.trackingId } as any) : null,
         motif,
       });

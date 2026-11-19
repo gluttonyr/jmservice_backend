@@ -19,8 +19,8 @@ export class AppController {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MatiStore</title>
-    <meta name="description" content="MatiStore, l'application mobile de commerce et de services.">
+    <title>JM Services</title>
+    <meta name="description" content="JM Services, l'application mobile de commerce et de services.">
     <style>
       :root { color-scheme: light; font-family: Arial, sans-serif; color: #17202a; background: #f5f7fa; }
       body { margin: 0; }
@@ -34,9 +34,9 @@ export class AppController {
   </head>
   <body>
     <main>
-      <img src="/assets/logo.png" alt="Logo MatiStore">
-      <h1>MatiStore</h1>
-      <p>MatiStore est une application mobile conçue pour faciliter l'accès aux produits et services proposés par notre plateforme.</p>
+      <img src="/assets/logo.png" alt="Logo JM Services">
+      <h1>JM Services</h1>
+      <p>JM Services est une application mobile conçue pour faciliter l'accès aux produits et services proposés par notre plateforme.</p>
       <div class="links">
         <a href="https://play.google.com/store/apps/details?id=com.urbain_diligence.matistore_mobile">Télécharger l'application Android</a>
         <a href="/support">Support et assistance</a>
@@ -55,7 +55,7 @@ export class AppController {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Règles de confidentialité | MatiStore</title>
+    <title>Règles de confidentialité | JM Services</title>
     <style>
       :root { font-family: Arial, sans-serif; color: #17202a; background: #f5f7fa; }
       body { margin: 0; }
@@ -73,7 +73,7 @@ export class AppController {
   </head>
   <body>
     <main>
-      <header><img src="/assets/logo.png" alt="Logo MatiStore"><h1>Règles de confidentialité</h1></header>
+      <header><img src="/assets/logo.png" alt="Logo JM Services"><h1>Règles de confidentialité</h1></header>
       <p class="updated">Dernière mise à jour : 3 août 2026</p>
       <p>Cette politique de confidentialité décrit nos politiques et procédures concernant la collecte, l'utilisation et la divulgation de vos informations lorsque vous utilisez le Service. Elle vous informe également de vos droits en matière de confidentialité et de la manière dont la loi vous protège.</p>
       <p>Nous utilisons vos données personnelles pour fournir et améliorer le Service. Nous collectons, utilisons et divulguons vos informations comme décrit dans cette politique et, lorsque la loi l'exige, uniquement avec une base légale valide, notamment votre consentement lorsque celui-ci est requis.</p>
@@ -83,8 +83,8 @@ export class AppController {
       <h3>Définitions</h3>
       <ul>
         <li><strong>Compte</strong> désigne un compte unique créé pour vous permettre d'accéder à notre Service ou à certaines de ses parties.</li>
-        <li><strong>Application</strong> désigne le logiciel MatiStore fourni par la Société.</li>
-        <li><strong>Société</strong>, également désignée par « Nous », « Notre » ou « Nos », désigne MatiStore.</li>
+        <li><strong>Application</strong> désigne le logiciel JM Services fourni par la Société.</li>
+        <li><strong>Société</strong>, également désignée par « Nous », « Notre » ou « Nos », désigne JM Services.</li>
         <li><strong>Pays</strong> désigne le Togo.</li>
         <li><strong>Appareil</strong> désigne tout appareil pouvant accéder au Service, tel qu'un ordinateur, un téléphone ou une tablette.</li>
         <li><strong>Données personnelles</strong> désigne toute information se rapportant à une personne identifiée ou identifiable.</li>
@@ -145,7 +145,7 @@ export class AppController {
       <p>Nous pouvons mettre à jour cette politique de temps à autre. Les modifications seront publiées sur cette page et la date de mise à jour sera modifiée. Nous pouvons également vous informer par e-mail ou par une notification visible lorsque cela est nécessaire.</p>
       <h2>Nous contacter</h2>
       <p>Pour toute question concernant cette politique, contactez-nous par e-mail : <a href="mailto:koufessirolland@gmail.com">koufessirolland@gmail.com</a>.</p>
-      <p><a href="/">Retour à la page d'accueil de MatiStore</a></p>
+      <p><a href="/">Retour à la page d'accueil de JM Services</a></p>
     </main>
   </body>
 </html>`;
@@ -160,7 +160,7 @@ export class AppController {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Support | MatiStore</title>
+    <title>Support | JM Services</title>
     <style>
       :root { font-family: Arial, sans-serif; color: #17202a; background: #f5f7fa; }
       body { margin: 0; }
@@ -178,7 +178,7 @@ export class AppController {
   </head>
   <body>
     <main>
-      <header><img src="/assets/logo.png" alt="Logo MatiStore"><h1>Support MatiStore</h1></header>
+      <header><img src="/assets/logo.png" alt="Logo JM Services"><h1>Support JM Services</h1></header>
       <p>Une question sur un dépôt, un retrait ou votre compte ? Notre équipe vous répond.</p>
 
       <h2>Nous contacter</h2>
@@ -196,7 +196,7 @@ export class AppController {
       <h3>Comment supprimer mon compte ?</h3>
       <p>Dans l'application, ouvrez l'onglet <em>Profil</em> puis touchez <em>Supprimer mon compte</em> et confirmez. Les données de votre profil (nom, e-mail, téléphone, photo) sont effacées et le compte ne peut plus être utilisé. L'historique des transactions (montants, numéros utilisés, références de paiement) est conservé pour nos obligations légales et comptables. Vous pouvez aussi demander la suppression par e-mail.</p>
 
-      <p><a href="/privacy-rule">Règles de confidentialité</a> · <a href="/">Accueil MatiStore</a></p>
+      <p><a href="/privacy-rule">Règles de confidentialité</a> · <a href="/">Accueil JM Services</a></p>
     </main>
   </body>
 </html>`;

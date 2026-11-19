@@ -19,7 +19,7 @@ describe('PushNotificationService', () => {
 
     const report = await service.sendToTokens(
       ['ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]'],
-      'MatiStore',
+      'JM Services',
       'Test push',
     );
 
@@ -43,7 +43,7 @@ describe('PushNotificationService', () => {
     ]);
 
     const token = 'ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]';
-    const report = await service.sendToTokens([token], 'MatiStore', 'Test push');
+    const report = await service.sendToTokens([token], 'JM Services', 'Test push');
 
     expect(report).toEqual({
       recipientCount: 1,
@@ -61,7 +61,7 @@ describe('PushNotificationService', () => {
 
     const report = await service.sendToTokens(
       ['ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]'],
-      'MatiStore',
+      'JM Services',
       'Test push',
     );
 
@@ -74,7 +74,7 @@ describe('PushNotificationService', () => {
   });
 
   it('reports malformed stored tokens instead of treating them as sent', async () => {
-    const report = await service.sendToTokens(['not-an-expo-token'], 'MatiStore', 'Test push');
+    const report = await service.sendToTokens(['not-an-expo-token'], 'JM Services', 'Test push');
 
     expect(report).toEqual({
       recipientCount: 1,

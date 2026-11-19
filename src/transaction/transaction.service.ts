@@ -999,12 +999,12 @@ export class TransactionService implements OnModuleInit, OnModuleDestroy {
             ? `${transaction.type === TransactionType.DEPOT ? 'Dépôt' : 'Retrait'} en attente`
             : transaction.statut === TransactionStatus.EN_VERIFICATION
               ? transaction.type === TransactionType.DEPOT ? 'Paiement reçu' : 'Retrait en vérification'
-              : 'MatiStore';
+              : 'JM Services';
       const adminTitle = transaction.type === TransactionType.RETRAIT && transaction.statut === TransactionStatus.EN_ATTENTE_ADMIN
         ? 'Retrait à envoyer au client'
         : transaction.statut === TransactionStatus.EN_RECLAMATION
           ? 'Nouvelle réclamation'
-          : 'MatiStore';
+          : 'JM Services';
       if (clientTokens.length) await this.pushNotificationService.sendToTokens(clientTokens, clientTitle, body, clientData);
       if (adminTokens.length) {
         const adminBody = transaction.statut === TransactionStatus.EN_RECLAMATION

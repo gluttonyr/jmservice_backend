@@ -42,7 +42,7 @@ describe('TransactionService automatic deposit verification', () => {
   const operator = {
     nom: 'TMoney',
     active: true,
-    notification_name: 'MATI STORE',
+    notification_name: 'JM SERVICES',
     notificationTitleAdmin: 'TMoney Paiement',
     notificationPackageAdmin: 'com.android.messaging',
     notificationPatternAdmin: 'Paiement de\\s+(?<montant>[\\d\\s]+)\\s+FCFA(?: effectué par\\s+(?<telephone>\\d+))?[\\s\\S]*?Ref\\s*:\\s*(?<reference>\\d+)',
@@ -66,7 +66,7 @@ describe('TransactionService automatic deposit verification', () => {
   const verifiedDeposit = (deposit: Transaction) => Object.assign(new Transaction(), deposit, {
     statut: TransactionStatus.EN_ATTENTE_ADMIN,
     referencePaiement: '123456',
-    notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+    notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
   });
 
   const setupAutoCredit = (verified: Transaction) => {
@@ -249,7 +249,7 @@ describe('TransactionService automatic deposit verification', () => {
       operateur: 'TMoney',
       montant: 1000,
       numeroTelephoneClient: '22890000000',
-      notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+      notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
       packageNotification: 'com.android.messaging',
       titreNotification: 'TMoney Paiement',
     }, 99);
@@ -281,7 +281,7 @@ describe('TransactionService automatic deposit verification', () => {
       operateur: 'TMoney',
       montant: 1000,
       numeroTelephoneClient: '22890000000',
-      notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+      notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
       packageNotification: 'com.android.messaging',
       titreNotification: 'TMoney Paiement',
     }, 99);
@@ -302,7 +302,7 @@ describe('TransactionService automatic deposit verification', () => {
       operateur: 'TMoney',
       montant: 1000,
       numeroTelephoneClient: '22890000000',
-      notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+      notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
       packageNotification: 'com.untrusted.app',
       titreNotification: 'TMoney Paiement',
     }, 99);
@@ -320,7 +320,7 @@ describe('TransactionService automatic deposit verification', () => {
       operateur: 'TMoney',
       montant: 1000,
       numeroTelephoneClient: '22890000000',
-      notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+      notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
       packageNotification: 'com.android.messaging',
       titreNotification: 'Notification falsifiée',
     }, 99);
@@ -374,7 +374,7 @@ describe('TransactionService automatic deposit verification', () => {
       operateur: 'TMoney',
       montant: 1000,
       numeroTelephoneClient: '22890000000',
-      notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+      notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
     }, 99);
 
     expect(result).toEqual(expect.objectContaining({
@@ -393,7 +393,7 @@ describe('TransactionService automatic deposit verification', () => {
       operateur: 'TMoney',
       montant: 1000,
       numeroTelephoneClient: '22890000000',
-      notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+      notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
       packageNotification: 'com.android.messaging',
       titreNotification: 'TMoney Paiement',
     }, 99)).rejects.toThrow('Seul un administrateur actif peut valider une transaction');
@@ -420,7 +420,7 @@ describe('TransactionService automatic deposit verification', () => {
       montant: 1000,
       notificationPostedAt: new Date('2026-10-09T17:01:30.000Z').getTime(),
       numeroTelephoneClient: '22890000000',
-      notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+      notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
       packageNotification: 'com.android.messaging',
       titreNotification: 'TMoney Paiement',
     }, 99);
@@ -458,7 +458,7 @@ describe('TransactionService automatic deposit verification', () => {
       montant: 1000,
       notificationPostedAt: notificationTime,
       numeroTelephoneClient: '22890000000',
-      notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+      notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
       packageNotification: 'com.android.messaging',
       titreNotification: 'TMoney Paiement',
     }, 99);
@@ -483,7 +483,7 @@ describe('TransactionService automatic deposit verification', () => {
       montant: 1000,
       notificationPostedAt: notificationTime,
       numeroTelephoneClient: '22890000000',
-      notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+      notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
       packageNotification: 'com.android.messaging',
       titreNotification: 'TMoney Paiement',
     }, 99);
@@ -508,7 +508,7 @@ describe('TransactionService automatic deposit verification', () => {
       montant: 1000,
       notificationPostedAt: notificationTime,
       numeroTelephoneClient: '22890000000',
-      notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+      notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
       packageNotification: 'com.android.messaging',
       titreNotification: 'TMoney Paiement',
     }, 99);
@@ -600,7 +600,7 @@ describe('TransactionService automatic deposit verification', () => {
       montant: 1000,
       notificationPostedAt: postedAt,
       numeroTelephoneClient: '22890000000',
-      notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+      notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
       packageNotification: 'com.android.messaging',
       titreNotification: 'TMoney Paiement',
     });
@@ -704,7 +704,7 @@ describe('TransactionService automatic deposit verification', () => {
       montant: 1000,
       notificationPostedAt: notificationTime,
       numeroTelephoneClient: '22890000000',
-      notificationBrute: 'MATI STORE Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
+      notificationBrute: 'JM SERVICES Paiement de 1 000 FCFA effectué par 22890000000 Ref: 123456',
       packageNotification: 'com.android.messaging',
       titreNotification: 'TMoney Paiement',
     }, 99);

@@ -174,7 +174,7 @@ export class AdminCaptureAvailabilityService implements OnModuleInit, OnModuleDe
       await this.push.sendToTokens(
         tokens,
         'Capture des paiements indisponible',
-        'Ouvrez MatiStore sur le téléphone admin et rétablissez la capture des notifications pour accepter de nouveaux dépôts.',
+        'Ouvrez JM Services sur le téléphone admin et rétablissez la capture des notifications pour accepter de nouveaux dépôts.',
         { type: 'ADMIN_CAPTURE_UNAVAILABLE' },
       );
     }

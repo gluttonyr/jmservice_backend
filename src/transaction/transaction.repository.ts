@@ -350,7 +350,7 @@ export class TransactionRepository extends Repository<Transaction> {
         transaction.methodeValidation = ValidationMethod.ADMIN_MANUEL;
         transaction.motifRejet = null;
       } else {
-        transaction.motifRejet = motif?.trim() || 'Réclamation examinée et refusée par MatiStore.';
+        transaction.motifRejet = motif?.trim() || 'Réclamation examinée et refusée par JM Services.';
       }
       return repository.save(transaction);
     });

@@ -18,13 +18,13 @@ export class StickerService implements OnModuleInit {
 
     await this.stickerRepository.save(
       this.stickerRepository.create({
-        libelle: 'Matistore',
-        code: 'MATISTORE',
-        image: 'matistore.png',
+        libelle: 'JM Services',
+        code: 'JM_SERVICES',
+        image: 'jmservices.png',
       }),
     );
 
-    console.log('✅ Sticker par défaut créé (matistore.png)');
+    console.log('✅ Sticker par défaut créé (jmservices.png)');
   }
 
   create(sticker: Partial<Sticker>) {

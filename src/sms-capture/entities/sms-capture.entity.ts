@@ -19,7 +19,7 @@ export enum SmsCaptureStatus {
 
 export enum SmsAttributionOrigin {
   AUTO_MATI_PAY = 'AUTO_MATI_PAY',
-  MATISTORE = 'MATISTORE',
+  JM_SERVICES = 'JM_SERVICES',
   MANUEL = 'MANUEL',
 }
 

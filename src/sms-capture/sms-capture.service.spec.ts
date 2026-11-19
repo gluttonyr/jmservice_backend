@@ -80,12 +80,12 @@ describe('SmsCaptureService.ingestBatch', () => {
     );
   });
 
-  it('duplicateReference links the MatiStore transaction as MATISTORE', async () => {
+  it('duplicateReference links the JM Services transaction as JM_SERVICES', async () => {
     tx.processAdminCapture.mockResolvedValue({ matched: false, retryable: false, duplicateReference: true });
     tx.findByPaymentReference.mockResolvedValue({ trackingId: 'ms1' });
     const [r] = await service.ingestBatch(1, 'd', [sms()]);
     expect(r).toMatchObject({ statut: SmsCaptureStatus.ATTRIBUE, transactionId: 'ms1' });
-    expect(repo.save).toHaveBeenCalledWith(expect.objectContaining({ origineAttribution: SmsAttributionOrigin.MATISTORE }));
+    expect(repo.save).toHaveBeenCalledWith(expect.objectContaining({ origineAttribution: SmsAttributionOrigin.JM_SERVICES }));
     expect(tx.findByPaymentReference).toHaveBeenCalledWith('R1');
   });
 
