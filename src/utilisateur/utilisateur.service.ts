@@ -61,7 +61,12 @@ export class UtilisateurService implements OnModuleInit {
       return;
     }
 
-    const password = 'Admin@123456';
+    // Only used the first time, when no admin exists. Set ADMIN_INITIAL_PASSWORD in production:
+    // the fallback is public (it is in the code).
+    const password = process.env.ADMIN_INITIAL_PASSWORD || 'Admin@123456';
+    if (!process.env.ADMIN_INITIAL_PASSWORD && process.env.NODE_ENV === 'production') {
+      console.warn('⚠️ ADMIN_INITIAL_PASSWORD absent : compte admin créé avec le mot de passe par défaut, à changer tout de suite.');
+    }
 
     const adminUser = this.userRepository.create({
       nom: 'Admin',

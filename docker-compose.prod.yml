@@ -1,0 +1,66 @@
+# JM Services backend in production (Dokploy "Docker Compose" deployment).
+# Every value comes from the environment of the Dokploy project (see .env.example), never from a file in Git.
+#
+# First start on an empty volume: PostgreSQL runs migrations/00000000-initial-schema.sql by itself
+# (docker-entrypoint-initdb.d), because NODE_ENV=production disables TypeORM synchronize.
+# Later schema changes: run the new migrations/*.sql by hand (psql), as on Matistore.
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Only read when postgres_data is empty (first start).
+      - ./migrations/00000000-initial-schema.sql:/docker-entrypoint-initdb.d/00-initial-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # No published port: the database is only reachable by the backend, inside the Compose network.
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      UPLOAD_ROOT: /app/uploads
+      # Password of the admin account created at the very first start (admin@jmservices.local).
+      ADMIN_INITIAL_PASSWORD: ${ADMIN_INITIAL_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set (new value, never Matistore's)}
+      # Same lifetime as Matistore; an empty value would break sign-in.
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-30d}
+      CORS_ORIGINS: ${CORS_ORIGINS:?CORS_ORIGINS must list the website address, e.g. https://app.example.com}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      APPLE_BUNDLE_ID: ${APPLE_BUNDLE_ID:-}
+      APPLE_SERVICES_ID: ${APPLE_SERVICES_ID:-}
+      SERVCUL_API_BASE_URL: ${SERVCUL_API_BASE_URL:-}
+      SERVCUL_HASH: ${SERVCUL_HASH:-}
+      SERVCUL_CASHIER_PASS: ${SERVCUL_CASHIER_PASS:-}
+      SERVCUL_LOGIN: ${SERVCUL_LOGIN:-}
+      SERVCUL_CASHDESK_ID: ${SERVCUL_CASHDESK_ID:-}
+      SERVCUL_API_TIMEOUT_MS: ${SERVCUL_API_TIMEOUT_MS:-}
+    # Dokploy's proxy reaches the container on port 3000 (set the domain on this service, port 3000).
+    expose:
+      - "3000"
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  uploads_data:

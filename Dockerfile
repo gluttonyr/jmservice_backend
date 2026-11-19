@@ -20,10 +20,14 @@ RUN npm ci --omit=dev
 # ---- runtime: image finale, ne contient que le strict nécessaire pour tourner ----
 FROM node:24-alpine AS runtime
 WORKDIR /app
+ENV NODE_ENV=production
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY assets ./assets
 COPY package.json ./
+
+# Uploaded files (profiles, banners, events…): mount a volume here (UPLOAD_ROOT=/app/uploads).
+RUN mkdir -p /app/uploads
 
 EXPOSE 3000
 CMD ["node", "dist/main"]
