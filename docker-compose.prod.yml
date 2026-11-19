@@ -56,11 +56,12 @@ services:
     expose:
       - "3000"
     volumes:
-      - uploads_data:/app/uploads
+      # Bind mount: the uploaded files (profiles, banners, events, messages) live in a folder of the server,
+      # created beforehand (see DEPLOIEMENT.md). UPLOADS_HOST_DIR changes it.
+      - ${UPLOADS_HOST_DIR:-/etc/dokploy/uploads/jmservices}:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
 
 volumes:
   postgres_data:
-  uploads_data:
