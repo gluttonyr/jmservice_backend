@@ -38,7 +38,6 @@ export class AppController {
       <h1>JM Services</h1>
       <p>JM Services est une application mobile conçue pour faciliter l'accès aux produits et services proposés par notre plateforme.</p>
       <div class="links">
-        <a href="https://play.google.com/store/apps/details?id=com.urbain_diligence.matistore_mobile">Télécharger l'application Android</a>
         <a href="/support">Support et assistance</a>
         <a href="/privacy-rule">Règles de confidentialité</a>
       </div>
