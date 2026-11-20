@@ -183,7 +183,7 @@ export class AppController {
       <h2>Nous contacter</h2>
       <div class="contact">
         <p><strong>Dans l'application :</strong> ouvrez l'onglet <em>Chats</em>, puis la conversation <em>Support</em>, et écrivez-nous.</p>
-        <p><strong>WhatsApp :</strong> <a href="https://wa.me/22896589141">+228 96 58 91 41</a></p>
+        <p><strong>WhatsApp :</strong> <a href="https://wa.me/22892378722">+228 92 37 87 22</a></p>
         <p><strong>E-mail :</strong> <a href="mailto:koufessirolland@gmail.com">koufessirolland@gmail.com</a></p>
       </div>
 
