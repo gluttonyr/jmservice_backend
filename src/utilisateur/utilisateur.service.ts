@@ -23,6 +23,50 @@ export class UtilisateurService implements OnModuleInit {
   async onModuleInit() {
     await this.dropUsernameUniqueConstraint();
     await this.ensureAdminExists();
+    await this.ensureEnvAdmins();
+  }
+
+  /**
+   * ADMIN_ACCOUNTS="email1:motdepasse1,email2:motdepasse2": at each start, creates the admin accounts that do
+   * not exist yet. An existing account is never changed (its password may have been changed since), so removing
+   * an entry does not delete the account either.
+   */
+  private async ensureEnvAdmins() {
+    const raw = process.env.ADMIN_ACCOUNTS?.trim();
+    if (!raw) return;
+    for (const entry of raw.split(',').map((e) => e.trim()).filter(Boolean)) {
+      const sep = entry.indexOf(':');
+      const email = (sep > 0 ? entry.slice(0, sep) : '').trim().toLowerCase();
+      const password = sep > 0 ? entry.slice(sep + 1) : '';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8) {
+        console.warn(`⚠️ ADMIN_ACCOUNTS : entrée ignorée « ${email || entry.split(':')[0]} » (format email:motdepasse, 8 caractères minimum)`);
+        continue;
+      }
+      try {
+        const existing = await this.userRepository.findOne({ where: { email } });
+        if (existing) {
+          if (existing.role !== UserRole.ADMIN)
+            console.warn(`⚠️ ADMIN_ACCOUNTS : ${email} existe déjà comme utilisateur simple, il n'est pas passé admin`);
+          continue;
+        }
+        const name = email.split('@')[0];
+        await this.userRepository.save(
+          this.userRepository.create({
+            nom: 'Admin',
+            prenom: name,
+            username: name,
+            email,
+            password: await bcrypt.hash(password, 10),
+            role: UserRole.ADMIN,
+            active: true,
+          }),
+        );
+        console.log(`👑 Compte admin créé depuis ADMIN_ACCOUNTS : ${email}`);
+      } catch (error) {
+        // One bad entry must not stop the server from starting.
+        console.warn(`⚠️ ADMIN_ACCOUNTS : création de ${email} impossible :`, error);
+      }
+    }
   }
 
   // Prod runs without TypeORM synchronize, so the old UNIQUE(username) stays in the database after the entity
