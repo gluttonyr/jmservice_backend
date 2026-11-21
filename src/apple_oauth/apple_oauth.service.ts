@@ -40,10 +40,9 @@ export class AppleOauthService {
       }
 
       // iOS app tokens carry the bundle ID, website tokens carry the Services ID.
-      // The iOS bundle ID uses dashes (app.config.js); the old underscore default is kept so nothing that passed before is rejected.
+      // The iOS bundle ID uses dashes (app.config.js); Apple does not allow underscores in it.
       const allowedAudiences = [
-        process.env.APPLE_BUNDLE_ID || 'com.urbain_diligence.matistore_mobile',
-        'com.urbain-diligence.matistore-mobile',
+        process.env.APPLE_BUNDLE_ID || 'com.urbain-diligence.jm-services',
         process.env.APPLE_SERVICES_ID || 'tech.matistore.web',
       ];
       if (claims.iss !== 'https://appleid.apple.com' || !allowedAudiences.includes(claims.aud) ||
