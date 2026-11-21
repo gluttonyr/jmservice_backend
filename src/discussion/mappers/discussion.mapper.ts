@@ -44,6 +44,7 @@ export class DiscussionMapper extends BaseMapper<Discussion, DiscussionResponseD
         .join(" ") ?? "";
 
       response.username = `${nom} ${prenom}`.trim();
+      response.userImage = user.image ?? null;
       if (includeUserProfile) {
         response.userProfile = {
           trackingId: user.trackingId,

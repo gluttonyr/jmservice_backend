@@ -25,6 +25,10 @@ export class DiscussionResponseDto {
   @Expose()
   username!:string;
 
+  // Profile photo of the client of the discussion (every list), so the admin sees it without opening the profile.
+  @Expose()
+  userImage?: string | null;
+
   @Expose()
   userProfile?: {
     trackingId: string;
