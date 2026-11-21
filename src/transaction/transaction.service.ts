@@ -225,7 +225,7 @@ export class TransactionService implements OnModuleInit, OnModuleDestroy {
     await this.assertAdmin(adminId);
     await this.captureAvailability.setWithdrawalsClosed(closed);
     this.logger.warn(JSON.stringify({ event: 'withdrawals.closed.changed', adminId, closed }));
-    return { withdrawalsClosed: closed };
+    return this.captureAvailability.getStatus();
   }
 
   async captureHeartbeat(adminId: number, dto: AdminCaptureHeartbeatDto) {

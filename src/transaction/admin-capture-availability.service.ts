@@ -136,6 +136,8 @@ export class AdminCaptureAvailabilityService implements OnModuleInit, OnModuleDe
     return {
       available: effectiveAvailable && !depositsClosed,
       depositsClosed,
+      // Admin switch for withdrawals (shown to admins only: clients receive `available` alone).
+      withdrawalsClosed: await this.withdrawalsClosed(),
       deviceAvailable,
       manualOverride: state.manualOverride,
       reason: depositsClosed ? 'deposits_closed' : state.manualOverride && !deviceAvailable ? 'manual_override' : failureReason,
