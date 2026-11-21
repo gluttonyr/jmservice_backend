@@ -31,7 +31,7 @@ export class DiscussionResponseDto {
     nom: string;
     prenom: string;
     username: string;
-    email: string;
+    email: string | null;
     telephone?: string | null;
     image?: string | null;
     active: boolean;

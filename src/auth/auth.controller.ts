@@ -12,7 +12,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService,private readonly googleOauthService : GoogleOauthService,private readonly appleOauthService: AppleOauthService,private readonly utilisateurService : UtilisateurService,private readonly utilisateurMapper : UserMapper ) {}
 
   @Post('login')
-  async login(@Body() body: { email: string; password: string }): Promise<ApiResponse> {
+  async login(@Body() body: { email?: string; telephone?: string; password: string }): Promise<ApiResponse> {
     const userData = await this.authService.login(body);
     
     

@@ -11,18 +11,20 @@ export class User extends BaseEntity {
   @Column()
   prenom!: string;
 
-  // Display name built from nom + prenom: two people can share it (accounts are found by email / id, never by username).
+  // Display name built from nom + prenom: two people can share it (accounts are found by email / phone / id, never by username).
   @Column()
   username!: string;
 
-  @Column({ unique: true })
-  email!: string;
+  // Optional: a client may sign up with a phone number only (email or phone, at least one; see UtilisateurService).
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  email!: string | null;
 
   @Column({ nullable: true })
   password?: string;
 
-  @Column({ nullable: true })
-  telephone?: string;
+  // Also a sign-in identifier: stored as "+" and digits, never shared by two active accounts.
+  @Column({ type: 'varchar', nullable: true })
+  telephone?: string | null;
 
   @Column({ nullable: true })
   image?: string;

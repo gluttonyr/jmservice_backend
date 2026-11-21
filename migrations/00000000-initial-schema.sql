@@ -813,7 +813,7 @@ CREATE TABLE public.users (
     nom character varying NOT NULL,
     prenom character varying NOT NULL,
     username character varying NOT NULL,
-    email character varying NOT NULL,
+    email character varying,
     password character varying,
     telephone character varying,
     image character varying,

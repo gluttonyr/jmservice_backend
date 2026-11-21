@@ -1,4 +1,5 @@
 import { Injectable, BadRequestException, OnModuleInit } from '@nestjs/common';
+import { isValidEmail, isValidPhone, normalizeEmail, normalizePhone, phoneDigits } from './contact';
 import * as bcrypt from 'bcryptjs';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -136,11 +137,14 @@ export class UtilisateurService implements OnModuleInit {
 
 
   async create(payload: CreateUserDto) {
-
-    const existing = await this.userRepository.findOne({ where: { email: payload.email } });
-    if (existing) {
-      throw new BadRequestException('Email déjà utilisé par un autre utilisateur');
+    // Sign-up with an email address, a phone number, or both (at least one): both are sign-in identifiers.
+    const email = normalizeEmail(payload.email);
+    const telephone = normalizePhone(payload.telephone);
+    if (!email && !telephone) {
+      throw new BadRequestException('Indiquez une adresse e-mail ou un numéro de téléphone');
     }
+    await this.assertContactsAvailable({ email, telephone });
+    payload = { ...payload, email: email as string, telephone: telephone as string };
 
     // One of the two names is enough (e.g. single-name Google accounts); the other stays empty.
     const rawNom = (payload.nom ?? '').trim();
@@ -279,8 +283,60 @@ export class UtilisateurService implements OnModuleInit {
     // if (payload.password) {
     //   payload.password = await bcrypt.hash(payload.password, 10);
     // }
+    payload = { ...payload };
+    if (payload.email !== undefined) payload.email = normalizeEmail(payload.email) as string;
+    if (payload.telephone !== undefined) payload.telephone = normalizePhone(payload.telephone) as string;
+    if (payload.email !== undefined || payload.telephone !== undefined) {
+      const email = payload.email !== undefined ? payload.email : user.email;
+      const telephone = payload.telephone !== undefined ? payload.telephone : user.telephone;
+      // The account must keep a way to sign in.
+      if (!email && !telephone) {
+        throw new BadRequestException('Gardez au moins une adresse e-mail ou un numéro de téléphone');
+      }
+      await this.assertContactsAvailable(
+        {
+          email: payload.email !== undefined && payload.email !== user.email ? payload.email : null,
+          telephone: payload.telephone !== undefined && phoneDigits(payload.telephone) !== phoneDigits(user.telephone)
+            ? payload.telephone
+            : null,
+        },
+        user.id,
+      );
+    }
     Object.assign(user, payload);
     return this.userRepository.save(user);
+  }
+
+  /** Active accounts whose phone number has these digits (normally one; older data may hold duplicates). */
+  findActiveByPhone(phone: string) {
+    const digits = phoneDigits(phone);
+    if (!digits) return Promise.resolve([] as User[]);
+    return this.userRepository.createQueryBuilder('user')
+      .where("regexp_replace(user.telephone, '[^0-9]', '', 'g') = :digits", { digits })
+      .andWhere('user.active = true')
+      .orderBy('user.id', 'ASC')
+      .getMany();
+  }
+
+  // An email or a phone number identifies one account only.
+  private async assertContactsAvailable(
+    { email, telephone }: { email?: string | null; telephone?: string | null },
+    exceptUserId?: number,
+  ) {
+    if (email) {
+      if (!isValidEmail(email)) throw new BadRequestException('Adresse e-mail invalide');
+      const existing = await this.userRepository.findOne({ where: { email } });
+      if (existing && existing.id !== exceptUserId) {
+        throw new BadRequestException('Email déjà utilisé par un autre utilisateur');
+      }
+    }
+    if (telephone) {
+      if (!isValidPhone(telephone)) throw new BadRequestException('Numéro de téléphone invalide');
+      const owners = await this.findActiveByPhone(telephone);
+      if (owners.some((owner) => owner.id !== exceptUserId)) {
+        throw new BadRequestException('Ce numéro de téléphone est déjà utilisé par un autre compte');
+      }
+    }
   }
 
   async remove(id: string) {
